@@ -6,42 +6,35 @@ from selenium import webdriver
 import re
 
 def get_patient_info():
-    Gu_dict = {'°­³²±¸': 'Gangnam-gu', '°­µ¿±¸':'Gangdong-gu', '°­ºÏ±¸': 'Gangbuk-gu', '°­¼­±¸': 'Gangseo-gu', '°ü¾Ç±¸':'Gwanak-gu', '±¤Áø±¸': 'Gwangjin-gu', '±¸·Î±¸':'Guro-gu', '±İÃµ±¸':'Geumcheon-gu',
-               '³ë¿ø±¸': 'Nowon-gu', 'µµºÀ±¸':'Dobong-gu', 'µ¿´ë¹®±¸':'Dongdaemun-gu', 'µ¿ÀÛ±¸':'Dongjak-gu', '¸¶Æ÷±¸':'Mapo-gu', '¼­´ë¹®±¸':'Seodaemun-gu', '¼­ÃÊ±¸':'Seocho-gu', '¼ºµ¿±¸':'Seongdong-gu',
-               '¼ººÏ±¸':'Seongbuk-gu', '¼ÛÆÄ±¸':'Songpa-gu', '¾çÃµ±¸':'Yangcheon-gu', '¿µµîÆ÷±¸':'Yeongdeungpo-gu', '¿ë»ê±¸':'Yongsan-gu', 'ÀºÆò±¸':'Eunpyeong-gu', 'Á¾·Î±¸':'Jongno-gu', 'Áß±¸': 'Jung-gu', 'Áß¶û±¸':'Jungnang-gu'}
+    Gu_dict = {'ê°•ë‚¨êµ¬': 'Gangnam-gu', 'ê°•ë™êµ¬':'Gangdong-gu', 'ê°•ë¶êµ¬': 'Gangbuk-gu', 'ê°•ì„œêµ¬': 'Gangseo-gu', 'ê´€ì•…êµ¬':'Gwanak-gu', 'ê´‘ì§„êµ¬': 'Gwangjin-gu', 'êµ¬ë¡œêµ¬':'Guro-gu', 'ê¸ˆì²œêµ¬':'Geumcheon-gu',
+               'ë…¸ì›êµ¬': 'Nowon-gu', 'ë„ë´‰êµ¬':'Dobong-gu', 'ë™ëŒ€ë¬¸êµ¬':'Dongdaemun-gu', 'ë™ì‘êµ¬':'Dongjak-gu', 'ë§ˆí¬êµ¬':'Mapo-gu', 'ì„œëŒ€ë¬¸êµ¬':'Seodaemun-gu', 'ì„œì´ˆêµ¬':'Seocho-gu', 'ì„±ë™êµ¬':'Seongdong-gu',
+               'ì„±ë¶êµ¬':'Seongbuk-gu', 'ì†¡íŒŒêµ¬':'Songpa-gu', 'ì–‘ì²œêµ¬':'Yangcheon-gu', 'ì˜ë“±í¬êµ¬':'Yeongdeungpo-gu', 'ìš©ì‚°êµ¬':'Yongsan-gu', 'ì€í‰êµ¬':'Eunpyeong-gu', 'ì¢…ë¡œêµ¬':'Jongno-gu', 'ì¤‘êµ¬': 'Jung-gu', 'ì¤‘ë‘êµ¬':'Jungnang-gu'}
     First_col = ['patient_id', 'global_num', 'sex', 'birth_year' ,'age', 'country', 'province', 'city', 'disease', 'infection_case', 'infection_order', 'infected_by', 'contact_number', 'symptom_onset_date', 'confirmed_date',
                  'released_date', 'deceased_date', 'state']
-    Infection_case = {'ÇØ¿Ü Á¢ÃË ÃßÁ¤': 'overseas inflow',
-                      'È®ÀÎÁß': ' ',
-                      'È®ÀÎ Áß': ' ',
-                      'Å¸½Ãµµ È®ÁøÀÚ Á¢ÃË': 'contact with patient',
-                      '¿ä¾ç½Ã¼³ °ü·Ã': 'Day Care Center',
-                      '¼ºµ¿±¸ ¾ÆÆÄÆ® °ü·Ã': 'Seongdong-gu APT',
-                      'ÀºÆò±¸ º´¿ø °ü·Ã': "Eunpyeong St. Mary's Hospital",
-                      '½ÅÃµÁö ÃßÁ¤': 'Shincheonji Church',
-                      '½ÃÃ»¿ª °ü·Ã': 'Seoul City Hall Station safety worker',
-                      '´ëÀÚ¿¬ÄÚ¸®¾Æ': 'Daezayeon Korea',
-                      'ÀÇ¿Õ ¹°·ù¼¾ÅÍ °ü·Ã': 'Uiwang Logistics Center',
-                      '¸®Ä¡¿şÀÌ °ü·Ã': 'Richway',
-                      '±İÃµ±¸ µµÁ¤±â È¸»ç °ü·Ã': 'Geumcheon-gu rice milling machine manufacture',
-                      '¾çÃµ±¸ ¿îµ¿½Ã¼³ °ü·Ã': 'Yangcheon Table Tennis Club',
-                      '´ëÀü ´Ù´Ü°è °ü·Ã': 'Daejeon door-to-door sales',
-                      '¿À·»Áö¶óÀÌÇÁ °ü·Ã': 'Orange Life',
-                      '¼öµµ±Ç °³Ã´±³È¸ °ü·Ã': 'SMR Newly Planted Churches Group',
-                      '°­³²±¸ ¿ª»ïµ¿ ¸ğÀÓ': 'Gangnam Yeoksam-dong gathering',
-                      '¿Õ¼º±³È¸ °ü·Ã': 'Wangsung Church',
-                      '''
-                      '´ëÀü ²Ş²Ù´Â ±³È¸': '¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼',
-                      '¿¬¾Æ³ª´º½ºÅ¬·¡½º °ü·Ã': '¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼',
-                      'ÇÑ±¹´ëÇĞ»ı¼±±³È¸ °ü·Ã':'¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼',
-                      'kb »ı¸íº¸Çè °ü·Ã': '¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼',
-                      'ºÎÃµ½Ã ÄíÆÎ °ü·Ã':'¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼¤¼',
-                      '''
-                      'ÀÌÅÂ¿ø Å¬·´ °ü·Ã': 'Itaewon Clubs'}
-    contact = re.compile('Á¢ÃË')
-    overseas = re.compile('ÇØ¿Ü')
-    released = re.compile('Åğ¿ø')
-    deceased = re.compile('»ç¸Á')
+    Infection_case = {'í•´ì™¸ ì ‘ì´‰ ì¶”ì •': 'overseas inflow',
+                      'í™•ì¸ì¤‘': ' ',
+                      'í™•ì¸ ì¤‘': ' ',
+                      'íƒ€ì‹œë„ í™•ì§„ì ì ‘ì´‰': 'contact with patient',
+                      'ìš”ì–‘ì‹œì„¤ ê´€ë ¨': 'Day Care Center',
+                      'ì„±ë™êµ¬ ì•„íŒŒíŠ¸ ê´€ë ¨': 'Seongdong-gu APT',
+                      'ì€í‰êµ¬ ë³‘ì› ê´€ë ¨': "Eunpyeong St. Mary's Hospital",
+                      'ì‹ ì²œì§€ ì¶”ì •': 'Shincheonji Church',
+                      'ì‹œì²­ì—­ ê´€ë ¨': 'Seoul City Hall Station safety worker',
+                      'ëŒ€ìì—°ì½”ë¦¬ì•„': 'Daezayeon Korea',
+                      'ì˜ì™• ë¬¼ë¥˜ì„¼í„° ê´€ë ¨': 'Uiwang Logistics Center',
+                      'ë¦¬ì¹˜ì›¨ì´ ê´€ë ¨': 'Richway',
+                      'ê¸ˆì²œêµ¬ ë„ì •ê¸° íšŒì‚¬ ê´€ë ¨': 'Geumcheon-gu rice milling machine manufacture',
+                      'ì–‘ì²œêµ¬ ìš´ë™ì‹œì„¤ ê´€ë ¨': 'Yangcheon Table Tennis Club',
+                      'ëŒ€ì „ ë‹¤ë‹¨ê³„ ê´€ë ¨': 'Daejeon door-to-door sales',
+                      'ì˜¤ë Œì§€ë¼ì´í”„ ê´€ë ¨': 'Orange Life',
+                      'ìˆ˜ë„ê¶Œ ê°œì²™êµíšŒ ê´€ë ¨': 'SMR Newly Planted Churches Group',
+                      'ê°•ë‚¨êµ¬ ì—­ì‚¼ë™ ëª¨ì„': 'Gangnam Yeoksam-dong gathering',
+                      'ì™•ì„±êµíšŒ ê´€ë ¨': 'Wangsung Church',
+                      'ì´íƒœì› í´ëŸ½ ê´€ë ¨': 'Itaewon Clubs'}
+    contact = re.compile('ì ‘ì´‰')
+    overseas = re.compile('í•´ì™¸')
+    released = re.compile('í‡´ì›')
+    deceased = re.compile('ì‚¬ë§')
 
     html = urlopen("https://www.seoul.go.kr/coronaV/coronaStatus.do")
     soup = BeautifulSoup(html, "html.parser")
@@ -82,7 +75,7 @@ def get_patient_info():
             worksheet.write(row_indx, 7, Gu_dict[text_list[text_indx+3]])
         except:
             worksheet.write(row_indx, 7, 'etc')
-        #infection_case Ãß°¡
+        #infection_case ì¶”ê°€
         if overseas.search(text_list[text_indx+5]):
             worksheet.write(row_indx, 9, 'overseas inflow')
         elif contact.search(text_list[text_indx+5]):
